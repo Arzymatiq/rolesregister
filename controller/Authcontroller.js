@@ -1,16 +1,20 @@
 import Role from "../model/Role.js";
 import User from "../model/User.js";
+import bcrypt from 'bcrypt'
 
 class Authcontroller{
     async register(req,res){
         try{
-            const {username,password} = res.body
-            const candidate = User.findOne({username})
+            const {username,password} = req.body
+            const candidate = await User.findOne({username})
             if(candidate){
                 return res.status(400).json({message:"такой пользователь уже сущ"})
             }
-
-            
+            const hashPassword = bcrypt.hashSync(password,3)
+            const userRole = await Role.findOne({value:"USER"})
+            const user = new User({username, password:hashPassword, role:[userRole.value]})
+            await user.save()
+            return res.json({message:"user is created"})
         }catch(e){
             console.log(e);
             res.status(400).json({massage:"error in register"})
@@ -18,6 +22,11 @@ class Authcontroller{
     }
     async login(req,res){
         try{
+            const {username,password} = req.body
+            const candidate = await User.findOne({username})
+            if(!candidate){
+                return res.status(400).json({message:"такого пользователя нет"})
+            }
 
         }catch(e){
             console.log(e);
