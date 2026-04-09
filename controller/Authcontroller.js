@@ -43,6 +43,7 @@ class Authcontroller{
             }
             const token = generateAccessToken(candidate._id, candidate.role)
             return res.json({token})
+
         }catch(e){
             console.log(e);
             res.status(400).json({massage:"error in login"})
@@ -50,7 +51,8 @@ class Authcontroller{
     }
     async getAllUser(req,res){
         try{
-
+            const users = await User.find()
+            res.json(users)
         }catch(e){
             console.log(e);
             res.status(400).json({massage:e})
